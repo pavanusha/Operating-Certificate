@@ -66,44 +66,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePreview();
 
-
-    // ==========================================
-    // GUILLOCHE & SPIROGRAPH GENERATION (Authentic Security Patterns)
-    // ==========================================
-    function drawGuillocheBackground() {
-        let paths = "";
-
-        // Colors typical in CMYK security printing (cyan, magenta, yellow, light green blends)
-        const colors = ['#00a8e8', '#e8006b', '#bf953f', '#2db84b'];
-
-        // Creates a horizontal wave that spans width, offset vertically
-        for (let i = 0; i < 40; i++) {
-            let d = `M 0,${i * 20} `;
-            for (let x = 0; x <= 1200; x += 10) {
-                // complex sine math for guilloche (amplitude modulation)
-                let y = (i * 20) + Math.sin(x / 50) * 30 * Math.cos(x / 200 + i) + Math.sin(x / 10 + i) * 5;
-                d += `L ${x},${y} `;
-            }
-            let color = colors[i % colors.length];
-            paths += `<path d="${d}" fill="none" stroke="${color}" stroke-width="0.8" opacity="0.6"/>`;
-        }
-
-        const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="1123" height="794" viewBox="0 0 1123 794">${paths}</svg>`;
-        const encodedData = window.btoa(unescape(encodeURIComponent(svgString)));
-        document.getElementById('guilloche-img').src = `data:image/svg+xml;base64,${encodedData}`;
-    }
-
-    drawGuillocheBackground();
-
-
-    // ==========================================
+    // = // ==========================================
     // HIGH RES EXPORT LOGIC (300 DPI A4 Landscape)
     // ==========================================
     const exportNode = document.getElementById('certificate-node');
 
     // scale: 3.125 is exactly 300 DPI for standard web 96 DPI baseline
     const captureConfig = {
-        scale: 4, // Using 4 (384 DPI) to ensure it's "at least" 300 DPI for pro printing
+        scale: 3.125, 
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
@@ -129,15 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         html2canvas(exportNode, captureConfig).then(canvas => {
             const imgData = canvas.toDataURL('image/jpeg', 1.0);
-            const pdf = new window.jspdf.jsPDF({
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
                 orientation: 'landscape',
                 unit: 'mm',
-                format: 'a4',
-                compress: true // Enables compression for better print handling
+                format: 'a4'
             });
 
             // Standard A4: 297 x 210mm
-            pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'SLOW');
+            pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
             pdf.save(`Certificate_${inputName.value.replace(/ /g, '_')}_300DPI_A4.pdf`);
 
             exportNode.style.transform = originalTransform;
