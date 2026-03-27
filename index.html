@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generator Pro</title>
+
+    <!-- Ultra-Premium Fonts & User Requested Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Pinyon+Script&family=Montserrat:wght@400;600&family=Sniglet:wght@400;800&family=Bebas+Neue&family=UnifrakturMaguntia&family=Gemunu+Libre:wght@400;700;800&family=Jacquard+24&family=Rye&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Controls -->
+        <div class="sidebar">
+            <h2>Certificate Config</h2>
+            <p class="subtitle">Customize the parameters.</p>
+
+            <div class="form-group">
+                <label for="staffName">Name of the Staff</label>
+                <input type="text" id="staffName" value="Kommara Suresh">
+            </div>
+
+            <div class="form-group">
+                <label for="staffDesignation">Designation</label>
+                <input type="text" id="staffDesignation" value="Sr TMR (Goods)">
+            </div>
+
+            <div class="form-group">
+                <label for="trainNo">Worked Train No</label>
+                <input type="text" id="trainNo" value="ME/MVAA/Bxt">
+            </div>
+
+            <div class="form-group">
+                <label for="certDate">Date</label>
+                <input type="date" id="certDate" value="2026-03-27">
+            </div>
+
+            <div class="form-group">
+                <label for="officerName">Name of the Officer</label>
+                <select id="officerName"></select>
+            </div>
+
+            <div class="form-actions">
+                <button id="btnPdf" class="btn btn-primary">Generate High-Res PDF</button>
+                <button id="btnJpeg" class="btn btn-secondary">Generate High-Res JPEG</button>
+            </div>
+        </div>
+
+        <!-- Main Preview Area -->
+        <div class="preview-area">
+            <div class="certificate-wrapper" id="certificate-node">
+
+                <!-- Mathematical Guilloché Background dynamically generated as base64 img -->
+                <img id="guilloche-img" class="guilloche-bg" src="" alt="Guilloche Pattern">
+
+                <!-- Border Overlays -->
+                <div class="border-outer">
+                    <div class="corner corner-tl"></div>
+                    <div class="corner corner-tr"></div>
+                    <div class="corner corner-bl"></div>
+                    <div class="corner corner-br"></div>
+                </div>
+                <div class="border-inner"></div>
+
+                <!-- Central Indian Railway Watermark -->
+                <img class="watermark" src="./IR.png" alt="Indian Railway Watermark"
+                    onerror="this.style.display='none'">
+
+                <!-- Certificate Content Layout -->
+                <div class="cert-content">
+
+                    <div class="cert-header">
+                        <!-- Symmetrical layout: left logo, center text, right logo (same as left for symmetry or balanced invisible block) -->
+                        <div class="logo-box">
+                            <img class="header-logo" src="./East Coast Railway.png" alt="East Coast Railway Logo"
+                                onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'110\' height=\'110\'></svg>'">
+                        </div>
+
+                        <div class="titles">
+                            <h1 class="gold-text">EAST COAST RAILWAY</h1>
+                            <h3 class="division-text">WALTAIR DIVISION</h3>
+                        </div>
+
+                        <div class="logo-box">
+                            <img src="IE.svg" class="emblem-img" alt="Emblem of India">
+                        </div>
+                    </div>
+
+                    <!-- Title below the gold separator line -->
+                    <h2 class="glittering-text">Certificate of Appreciation</h2>
+
+                    <div class="cert-body">
+                        <p class="script-p">This certificate is proudly presented to</p>
+                        <div class="name-display"><span id="display-name">Kommara Suresh</span><span
+                                class="inline-designation">, <span id="display-designation">Sr TMR (Goods)</span></span>
+                        </div>
+                        <p class="body-p">in recognition of outstanding service, dedication, and exemplary performance
+                        </p>
+                        <p class="body-p">
+                            while diligently working on Train No. <span class="input-display" id="display-train">12839
+                                (Chennai Mail)</span> on <span class="input-display" id="display-date">27th March,
+                                2026</span>.
+                        </p>
+                        <p class="footer-p">We commend your absolute commitment to safety, punctuality, and excellence
+                            in operations.</p>
+                    </div>
+
+                    <div class="cert-footer" style="justify-content: flex-end;">
+                        <div class="signature-block">
+                            <div class="sig-line"></div>
+                            <div class="sig-name" id="display-officer">John Doe</div>
+                            <span id="display-officer-title">Divisional Railway Manager</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
