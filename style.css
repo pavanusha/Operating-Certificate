@@ -134,7 +134,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, #1e2a38, #0a0f14);
+    background: #e9eaed;
     overflow: auto;
     padding: 40px;
 }
