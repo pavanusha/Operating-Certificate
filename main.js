@@ -167,9 +167,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const leftRosette = clonedDoc.querySelector('.rosette-left');
             if (leftRosette) {
-                leftRosette.style.backgroundImage = `url(${drawRosetteToDataURL('M0 0 Q 10 -40 0 -80 T 0 0', '#4a69bd', 10)})`;
+                // Same gold pattern as right rosette, mirrored with scaleX(-1) to match CSS
+                leftRosette.style.backgroundImage = `url(${drawRosetteToDataURL('M0 0 Q 50 -50 0 -100 T 0 0', '#b38728', 15)})`;
                 leftRosette.style.opacity = '1'; // Already baked with alpha
                 leftRosette.style.backgroundSize = 'contain';
+                leftRosette.style.transform = 'translateY(-50%) scaleX(-1)'; // Keep mirror
             }
 
             const rightRosette = clonedDoc.querySelector('.rosette-right');
@@ -178,15 +180,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 rightRosette.style.opacity = '1'; // Already baked with alpha
                 rightRosette.style.backgroundSize = 'contain';
             }
-
-            // --- BORDER REFLOW (Chrome Seam Fix) ---
-            const meshElements = clonedDoc.querySelectorAll('.mesh');
-            meshElements.forEach(el => {
-                el.style.display = 'block';
-                el.getBoundingClientRect(); // Force Chromium render engine refresh
-            });
         }
     };
+
 
     document.getElementById('btnJpeg').addEventListener('click', () => {
         const originalTransform = exportNode.style.transform;
