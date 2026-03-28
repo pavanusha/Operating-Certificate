@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputDate = document.getElementById('certDate');
     const selectOfficer = document.getElementById('officerName');
 
+    // Set Default Today's Date
+    const today = new Date().toISOString().split('T')[0];
+    inputDate.value = today;
+
     const displayName = document.getElementById('display-name');
     const displayDesignation = document.getElementById('display-designation');
     const displayTrain = document.getElementById('display-train');

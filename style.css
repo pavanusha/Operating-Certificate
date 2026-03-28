@@ -119,13 +119,13 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--navy), #1a3c6b);
+    background: linear-gradient(135deg, DarkMagenta, #660066);
     color: white;
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #1d976c, #93f9b9);
-    color: #000;
+    background: linear-gradient(135deg, DarkCyan, #007070);
+    color: white;
 }
 
 /* Certificate */
@@ -427,4 +427,65 @@ body {
     font-size: 12px;
     color: #555;
     text-transform: uppercase;
+}
+
+/* === MOBILE RESPONSIVENESS & SCALING === */
+@media (max-width: 1200px) {
+    body {
+        padding: 10px;
+    }
+
+    .app-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+        margin-bottom: 0;
+        padding: 20px;
+    }
+
+    .preview-area {
+        width: 100%;
+        padding: 20px 5px;
+        min-height: 400px; /* Base height for the preview window */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        overflow: hidden; /* Prevent horizontal scroll on mobile */
+    }
+
+    /* Scaling the fixed-size A4 certificate to fit device width */
+    .certificate-wrapper {
+        flex-shrink: 0; /* Important: do not shrink the element itself */
+        transform-origin: top center; /* Scale from top-center for clean fit */
+        margin-bottom: -150px; /* Negative margin to pull layout up as scaled height is less */
+        
+        /* 
+           Dynamic Scaling Logic: 
+           Calculates ratio based on (Viewport Width - Padding) / 1123px (A4 Width)
+        */
+        transform: scale(calc((100vw - 30px) / 1123));
+    }
+}
+
+/* Specific Tweak for Tablets / Mid-Size */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .certificate-wrapper {
+        margin-bottom: -350px; /* Larger negative margin for tablets as they are taller */
+    }
+}
+
+/* Tweak for extremely small screens */
+@media (max-width: 480px) {
+    .preview-area {
+        min-height: 250px;
+    }
+    .certificate-wrapper {
+        margin-bottom: -100px;
+    }
 }
