@@ -3,16 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── Officer Data ─────────────────────────────────────────────────────────
     const officers = [
 
-        { id: 1, name: "Sri. A. Avinash Sarma", title: "Sr.DOM (I/C)" },
-        { id: 2, name: "Sri. V. Ravi Teja", title: "DOM(M)" },
-        { id: 3, name: "Sri. P. Hemanth Kumar", title: "DOM(P)" },
-        { id: 4, name: "Sri. Y. V. Ramana", title: "AOM (Chg./G)" },
-        { id: 5, name: "Sri. M. Sai Kumar", title: "AOM (Control)" },
-        { id: 6, name: "Sri. Harendra Prasad", title: "AOM(WAT)/WMY" },
-        { id: 7, name: "Sri. Pranav Jetley", title: "AARM/VSPS" },
-        { id: 8, name: "Sri. A. M. Ubhale", title: "SD/VSKP" },
-        { id: 9, name: "Sri. P. Siva Naresh", title: "Principal/MDTC" },
-        { id: 10, name: "Sri. V. Trinadh", title: "ADSO/VSKP" },
+        { id: 1, name: "M Sravan Kumar", title: "Sr.DOM (I/C)" },
+        { id: 2, name: "Sri. A. Avinash Sarma", title: "Sr.DOM (M)" },
+        { id: 3, name: "Sri. V. Ravi Teja", title: "DOM(M)" },
+        { id: 4, name: "Sri. P. Hemanth Kumar", title: "DOM(P)" },
+        { id: 5, name: "Sri. Y. V. Ramana", title: "AOM (Chg./G)" },
+        { id: 6, name: "Sri. M. Sai Kumar", title: "AOM (Control)" },
+        { id: 7, name: "Sri. Harendra Prasad", title: "AOM(WAT)/WMY" },
+        { id: 8, name: "Sri. Pranav Jetley", title: "AARM/VSPS" },
+        { id: 9, name: "Sri. A. M. Ubhale", title: "SD/VSKP" },
+        { id: 10, name: "Sri. P. Siva Naresh", title: "Principal/MDTC" },
+        { id: 11, name: "Sri. V. Trinadh", title: "ADSO/VSKP" },
 
     ];
 
