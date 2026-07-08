@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── Officer Data ─────────────────────────────────────────────────────────
     const officers = [
 
-        { id: 1, name: "M Sravan Kumar", title: "Sr.DOM (I/C)" },
+        { id: 1, name: "Sri. M. Sravan Kumar", title: "Sr.DOM (I/C)" },
         { id: 2, name: "Sri. A. Avinash Sarma", title: "Sr.DOM (M)" },
         { id: 3, name: "Sri. V. Ravi Teja", title: "DOM(M)" },
         { id: 4, name: "Sri. P. Hemanth Kumar", title: "DOM(P)" },
