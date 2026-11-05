@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ─── Officer Data ─────────────────────────────────────────────────────────
-    const officers = [
+    // ─── Google Sheets Configuration ──────────────────────────────────────────
+    const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/13CwKhOa3SCXgxL2hArU2vOmo8ovJXY2nSkyXjRZSvE0/edit?usp=sharing';
 
+    // ─── Officer Fallback Data ─────────────────────────────────────────────────
+    const DEFAULT_OFFICERS = [
         { id: 1, name: "Sri. M. Sravan Kumar", title: "Sr.DOM" },
         { id: 2, name: "Sri. A. Avinash Sarma", title: "Sr.DOM (M)" },
         { id: 3, name: "Sri. V. Ravi Teja", title: "DOM(M)" },
@@ -14,8 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 9, name: "Sri. A. M. Ubhale", title: "SD/VSKP" },
         { id: 10, name: "Sri. P. Siva Naresh", title: "Principal/MDTC" },
         { id: 11, name: "Sri. V. Trinadh", title: "ADSO/VSKP" },
-
     ];
+
+    let officers = [...DEFAULT_OFFICERS];
 
     // ─── DOM References ───────────────────────────────────────────────────────
     const inputName = document.getElementById('staffName');
@@ -35,13 +38,18 @@ document.addEventListener('DOMContentLoaded', () => {
     inputDate.value = new Date().toISOString().split('T')[0];
 
     // ─── Populate Officer Dropdown ────────────────────────────────────────────
-    officers.forEach((officer, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${officer.name} - ${officer.title}`;
-        selectOfficer.appendChild(option);
-    });
-    selectOfficer.value = 0;
+    const populateOfficers = (list) => {
+        selectOfficer.innerHTML = '';
+        list.forEach((officer, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${officer.name} - ${officer.title}`;
+            selectOfficer.appendChild(option);
+        });
+        selectOfficer.value = 0;
+    };
+
+    populateOfficers(officers);
 
     // ─── Date Formatter ───────────────────────────────────────────────────────
     const formatDate = (dateString) => {
@@ -70,6 +78,124 @@ document.addEventListener('DOMContentLoaded', () => {
     inputDate.addEventListener('input', updatePreview);
     selectOfficer.addEventListener('change', updatePreview);
     updatePreview();
+
+    // ─── Google Sheets Sync ───────────────────────────────────────────────────
+    const parseCSVLine = (line) => {
+        const values = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                    cur += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                values.push(cur.trim());
+                cur = '';
+            } else {
+                cur += char;
+            }
+        }
+        values.push(cur.trim());
+        return values;
+    };
+
+    const parseCSV = (text) => {
+        const rawLines = text.trim().split(/\r?\n/).filter(line => line.trim().length > 0);
+        if (!rawLines.length) return [];
+
+        const firstRow = parseCSVLine(rawLines[0]).map(c => c.toLowerCase());
+
+        let idIdx = -1;
+        let nameIdx = -1;
+        let titleIdx = -1;
+
+        firstRow.forEach((col, idx) => {
+            if (/s\.?no|sl|id|serial/i.test(col)) idIdx = idx;
+            else if (/officer|name/i.test(col)) nameIdx = idx;
+            else if (/designation|title|post|rank/i.test(col)) titleIdx = idx;
+        });
+
+        const hasHeader = nameIdx !== -1 || titleIdx !== -1;
+        if (!hasHeader) {
+            idIdx = 0;
+            nameIdx = 1;
+            titleIdx = 2;
+        } else {
+            if (nameIdx === -1) nameIdx = 1;
+            if (titleIdx === -1) titleIdx = 2;
+        }
+
+        const dataLines = hasHeader ? rawLines.slice(1) : rawLines;
+        const list = [];
+
+        dataLines.forEach((line, index) => {
+            const cols = parseCSVLine(line);
+            const name = (cols[nameIdx] || '').trim();
+            const title = (cols[titleIdx] || '').trim();
+            const id = idIdx >= 0 && cols[idIdx] ? cols[idIdx].trim() : String(index + 1);
+
+            if (name) {
+                list.push({ id, name, title });
+            }
+        });
+
+        return list;
+    };
+
+    const getGoogleSheetCsvUrl = (input) => {
+        if (!input || !input.trim()) return null;
+        const str = input.trim();
+
+        if (str.includes('/pub?') && str.includes('output=csv')) return str;
+        if (str.includes('/gviz/tq') && str.includes('out:csv')) return str;
+
+        const match = str.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            const gidMatch = str.match(/[#&?]gid=([0-9]+)/);
+            const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '';
+            return `https://docs.google.com/spreadsheets/d/${match[1]}/gviz/tq?tqx=out:csv${gidParam}`;
+        }
+
+        if (/^[a-zA-Z0-9-_]{20,}$/.test(str)) {
+            return `https://docs.google.com/spreadsheets/d/${str}/gviz/tq?tqx=out:csv`;
+        }
+
+        return str;
+    };
+
+    const loadOfficersFromSheet = async () => {
+        const sheetUrl = new URLSearchParams(window.location.search).get('sheet')
+            || localStorage.getItem('OFFICERS_SHEET_URL')
+            || GOOGLE_SHEET_URL;
+
+        if (!sheetUrl) return;
+
+        const csvUrl = getGoogleSheetCsvUrl(sheetUrl);
+        if (!csvUrl) return;
+
+        try {
+            const response = await fetch(csvUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const csvText = await response.text();
+            const parsed = parseCSV(csvText);
+
+            if (parsed.length > 0) {
+                officers = parsed;
+                populateOfficers(officers);
+                updatePreview();
+                console.log(`Loaded ${officers.length} officers from Google Sheet.`);
+            }
+        } catch (error) {
+            console.warn('Could not load officers from Google Sheet, using fallback data:', error);
+        }
+    };
+
+    loadOfficersFromSheet();
 
     // ─── Border Frame Generator ───────────────────────────────────────────────
     const generateBorderFrame = () => {
